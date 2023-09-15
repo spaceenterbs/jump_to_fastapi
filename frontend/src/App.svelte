@@ -1,47 +1,33 @@
-<script>
-  import svelteLogo from './assets/svelte.svg'
-  import viteLogo from '/vite.svg'
-  import Counter from './lib/Counter.svelte'
+<!-- <script> // <script> 블록에 message라는 변수를 생성하고 FastAPI의 hello API를 호출하여 돌려받은 값을 message 변수에 담았다.
+  let message;
+
+  fetch("http://127.0.0.1:8000/hello").then((response) => {
+    response.json().then((json) => {
+      message = json.message;
+    });
+  });
 </script>
 
-<main>
-  <div>
-    <a href="https://vitejs.dev" target="_blank" rel="noreferrer">
-      <img src={viteLogo} class="logo" alt="Vite Logo" />
-    </a>
-    <a href="https://svelte.dev" target="_blank" rel="noreferrer">
-      <img src={svelteLogo} class="logo svelte" alt="Svelte Logo" />
-    </a>
-  </div>
-  <h1>Vite + Svelte</h1>
+<h1>{message}</h1> -->
+<!-- 그리고 담겨진 message 값을 출력했다. Svelte는 자스에 선언된 변수의 값을 HTML 태그에 중괄호 기호를 사용하여 표시할 수 있다. -->
 
-  <div class="card">
-    <Counter />
-  </div>
+<script>
+  async function hello() {
+    const res = await fetch("http://127.0.0.1:8000/hello");
+    const json = await res.json();
 
-  <p>
-    Check out <a href="https://github.com/sveltejs/kit#readme" target="_blank" rel="noreferrer">SvelteKit</a>, the official Svelte app framework powered by Vite!
-  </p>
+    if (res.ok) {
+      return json.message;
+    } else {
+      alert("error");
+    }
+  }
 
-  <p class="read-the-docs">
-    Click on the Vite and Svelte logos to learn more
-  </p>
-</main>
+  let promise = hello();
+</script>
 
-<style>
-  .logo {
-    height: 6em;
-    padding: 1.5em;
-    will-change: filter;
-    transition: filter 300ms;
-  }
-  .logo:hover {
-    filter: drop-shadow(0 0 2em #646cffaa);
-  }
-  .logo.svelte:hover {
-    filter: drop-shadow(0 0 2em #ff3e00aa);
-  }
-  .read-the-docs {
-    color: #888;
-  }
-</style>
+{#await promise}
+  <p>...waiting</p>
+{:then message}
+  <h1>{message}</h1>
+{/await}
